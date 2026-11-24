@@ -85,6 +85,22 @@ try { execFileSync('ffprobe', ['-version'], { stdio: 'ignore' }); } catch { ffpr
   }
 });
 
+// ---- Manuskripte in texte/ ----
+console.log('\n2b) Manuskripte im Ordner texte/');
+(folgen || []).forEach((f) => {
+  const name = `folge-${String(f.nummer).padStart(2, '0')}.md`;
+  const datei = path.join(wurzel, 'texte', name);
+  if (!fs.existsSync(datei)) { hinweis(`${name} fehlt noch (Manuskript zu Folge ${f.nummer})`); return; }
+  const text = fs.readFileSync(datei, 'utf8');
+  const teile = [...text.matchAll(/^## Teil ([a-z])\s*\n([\s\S]*?)(?=^## |(?![\s\S]))/gm)];
+  if (!teile.length) { hinweis(`${name}: keine Abschnitte „## Teil a“, „## Teil b“ … gefunden`); return; }
+  if (teile.length !== (f.teile || []).length) hinweis(`${name}: ${teile.length} Teile im Text, aber ${(f.teile || []).length} MP3s in folgen.json`);
+  teile.forEach(([, b, inhalt]) => {
+    const n = inhalt.trim().length;
+    n <= 5000 ? ok(`${name} Teil ${b}: ${n} Zeichen (Grenze 5.000)`) : falsch(`${name} Teil ${b}: ${n} Zeichen – mehr als 5.000, zu lang für ElevenLabs`);
+  });
+});
+
 // ---- 3. Zeit-Berechnung über mehrere Teile ----
 console.log('\n3) Teile werden richtig zusammengerechnet');
 const d = [300, 200.5, 100];

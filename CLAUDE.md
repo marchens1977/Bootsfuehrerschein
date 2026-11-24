@@ -28,7 +28,7 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 - `folgen/folgen.json` enthält Folge 1 „Lichter und Signale“ (Basis, 2 Teile).
 - MP3s von Folge 1 sind da: `folge-01-a.mp3` (4:04) + `folge-01-b.mp3` (2:17) = **6:21 Min.** Marc hatte sie versehentlich in den Hauptordner hochgeladen, Claude hat sie nach `folgen/` verschoben. Übergang A → B mit den echten Dateien im Test-Browser geprüft.
 - GitHub Pages ist noch **nicht** eingeschaltet (kann Claude nicht selbst, Marc muss es in den Settings tun).
-- Manuskript von Folge 1 liegt nur als Audio im Claude-Projekt vor → `texte/` enthält nur eine Erklärung.
+- Manuskript von Folge 1 liegt als `texte/folge-01.md` im Repository (aus Google Drive geholt). Teil a: 3.661 Zeichen, Teil b: 1.970 Zeichen. Quelle: ELWIS-Basisfragen 4, 5, 7, 10, 11, 12, 13, 16, 24, 72.
 - Design auf Marcs Corporate Design umgestellt (Orange & Blau wie die New York Mets).
 - Alle automatischen Tests laufen durch (siehe unten). Auf Marcs Handy ist noch nichts getestet.
 
@@ -43,6 +43,18 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 8. **Lenkradtasten:** „Weiter/Zurück“ = nächste/vorige Folge; „Spulen“ = ±15 s.
 9. **Corporate Design: Orange & Blau wie die New York Mets.** Hintergrund dunkles Mets-Blau `#001a42`, Flächen Mets-Blau `#002d72`, große Knöpfe Mets-Orange `#ff5910` mit dunkelblauer Schrift, dazu Weiß. Farben stehen oben in `css/style.css` (`:root`), App-Symbol in `werkzeuge/mache-icons.py`. Dunkel bleibt es wegen der Nutzung im Auto.
 10. **Gespeicherte Daten** liegen im Browser-Speicher (`localStorage`, Schlüssel `bfp-daten-v1`). Export/Import als JSON-Datei. Import fragt vorher, weil er den aktuellen Stand ersetzt.
+
+## Google Drive (Austausch zwischen Claude-Chat und Claude Code)
+Neue Folgen (MP3s + Manuskript) kommen zuerst in Marcs Google Drive, Claude Code holt sie von dort ins Repository.
+| Ordner | Link |
+|---|---|
+| Bootsführerschein (Hauptordner) | https://drive.google.com/drive/folders/1OTZ_CjS2TqEH-52egq04CnHjRDk3vslF |
+| folgen (MP3s) | https://drive.google.com/drive/folders/1qfg5up9OnT-VhzsQE2uDcUuE24N2zkG8 |
+| texte (Manuskripte) | https://drive.google.com/drive/folders/1H75fH5yBp8U2K08bUR6kKn3xQDYiZKZ3 |
+
+So holt Claude Code eine Datei: Google-Drive-Verbindung → im Ordner suchen (`parentId = '<Ordner-ID>'`) → `download_file_content`. Die Datei landet als Datei in der Sitzung und wird dann ins Repository kopiert. Direkter Download über drive.google.com ist in der Sitzung gesperrt, ist aber auch nicht nötig.
+- Getestet am 24.11.2026 mit `folge-01.md` (Text). **MP3s auf diesem Weg sind noch nicht getestet**; das passiert mit Folge 2.
+- MP3s von Folge 1 liegen schon im Repository und sollen nicht angefasst werden.
 
 ## Vertonungs-Einstellungen (damit alle Folgen gleich klingen)
 | Einstellung | Wert |
@@ -85,25 +97,26 @@ werkzeuge/            Hilfsprogramme
    ```
    `bereich` ist genau eins von: `Basis`, `See`, `Binnen`. Die Länge muss man **nicht** eintragen.
 4. Nach 1–2 Minuten ist die Folge in der App (evtl. App einmal neu laden).
-5. Einfacher: Claude in einer Sitzung bitten „Trag Folge 2 ein“ – Claude prüft dann auch alles mit den Tests.
+5. Einfacher: MP3s und Manuskript in den Google-Drive-Ordner „Bootsführerschein“ legen (MP3s nach `folgen`, Manuskript nach `texte`) und Claude Code bitten: „Hol Folge 2 aus meinem Google-Drive-Ordner Bootsführerschein und trag sie in die App ein.“ Claude prüft dann alles mit den Tests.
 6. Das Manuskript als `texte/folge-NN.md` speichern.
 
 ## Tests
 | Test | Was er prüft | Befehl |
 |---|---|---|
-| `tests/pruefe-folgen.mjs` | folgen.json gültig (Nummern, Titel, Bereich, Dateinamen), welche MP3s vorhanden sind (+ Länge, wenn ffprobe da ist), und ob die Teile richtig zusammengerechnet werden (`zeitleiste.js`) | `node tests/pruefe-folgen.mjs` (mit `--streng` zählen fehlende MP3s als Fehler) |
+| `tests/pruefe-folgen.mjs` | folgen.json gültig (Nummern, Titel, Bereich, Dateinamen), welche MP3s vorhanden sind (+ Länge, wenn ffprobe da ist), ob es zu jeder Folge ein Manuskript `texte/folge-NN.md` gibt, ob die Anzahl „## Teil …“-Abschnitte zu den MP3s passt und ob jeder Teil höchstens 5.000 Zeichen hat, und ob die Teile richtig zusammengerechnet werden (`zeitleiste.js`) | `node tests/pruefe-folgen.mjs` (mit `--streng` zählen fehlende MP3s als Fehler) |
 | `tests/browser-test.mjs` | Die echte App in Chromium mit Test-Tönen: Liste, Filter, Teil A → B nahtlos, Restzeit, automatisch weiter, Zählen, Spulen über Teilgrenzen, Geschwindigkeit, Weiterhören nach Neustart, „Audio folgt bald“, Export/Import, Offline-Speichern (auch während des Abspielens), Spielen und Spulen ohne Internet, Sperrbildschirm-Titel | `node tests/browser-test.mjs` (braucht Playwright + ffmpeg, läuft in Claude-Sitzungen) |
 
 Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter „Actions“). Ein rotes ✗ heißt: in folgen.json ist ein Fehler.
 
-**Letzter Lauf (24.11.2026):** `pruefe-folgen.mjs` 0 Fehler (auch mit `--streng`: alle MP3s vorhanden), `browser-test.mjs` 0 Fehler.
+**Letzter Lauf (24.11.2026):** `pruefe-folgen.mjs` 0 Fehler (auch mit `--streng`: alle MP3s vorhanden, Manuskript Folge 1 geprüft), `browser-test.mjs` 0 Fehler.
 
 ## Hilfsprogramme
 - `werkzeuge/mache-icons.py` – erzeugt die App-Symbole neu (`python3 werkzeuge/mache-icons.py`, braucht Pillow).
 
 ## Offene Punkte
 - [x] MP3s von Folge 1 hochgeladen.
-- [ ] Manuskript Folge 1 als `texte/folge-01.md` (liegt bisher nur als Audio vor; ggf. von Claude abtippen lassen).
+- [x] Manuskript Folge 1 als `texte/folge-01.md`.
+- [ ] Ersten MP3-Transport Drive → Repository mit Folge 2 testen.
 - [ ] GitHub Pages einschalten (siehe README).
 - [ ] Alles auf dem Handy und im Auto testen (Liste unten).
 - [ ] Ideen für später: Schlaf-Timer, Lesezeichen/Kapitel, „nur ungehörte Folgen“.
