@@ -26,7 +26,8 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 ## Aktueller Stand (24.11.2026)
 - App fertig gebaut: Liste, Filter, Player, Weiterhören, Fortschritt, Geschwindigkeit, automatisch weiter / wiederholen, Sperrbildschirm-Steuerung, Export/Import, Offline-Speicher, installierbar (PWA).
 - `folgen/folgen.json` enthält Folge 1 „Lichter und Signale“ (Basis, 2 Teile).
-- **Die MP3s von Folge 1 fehlen noch** → die App zeigt „Audio folgt bald“, bis Marc sie hochlädt.
+- MP3s von Folge 1 sind da: `folge-01-a.mp3` (4:04) + `folge-01-b.mp3` (2:17) = **6:21 Min.** Marc hatte sie versehentlich in den Hauptordner hochgeladen, Claude hat sie nach `folgen/` verschoben. Übergang A → B mit den echten Dateien im Test-Browser geprüft.
+- GitHub Pages ist noch **nicht** eingeschaltet (kann Claude nicht selbst, Marc muss es in den Settings tun).
 - Manuskript von Folge 1 liegt nur als Audio im Claude-Projekt vor → `texte/` enthält nur eine Erklärung.
 - Design auf Marcs Corporate Design umgestellt (Orange & Blau wie die New York Mets).
 - Alle automatischen Tests laufen durch (siehe unten). Auf Marcs Handy ist noch nichts getestet.
@@ -72,7 +73,7 @@ werkzeuge/            Hilfsprogramme
 
 ## So kommt eine neue Folge in die App
 1. MP3-Teile richtig benennen: `folge-NN-a.mp3`, `folge-NN-b.mp3`, … (NN = Folgennummer zweistellig, z. B. `folge-02-a.mp3`). Nur Kleinbuchstaben, keine Leerzeichen.
-2. Auf github.com im Handy-Browser: Repository öffnen → Ordner `folgen` → **„Add file“ → „Upload files“** → MP3s auswählen → unten **„Commit changes“**.
+2. Auf github.com im Handy-Browser: Repository öffnen → **erst in den Ordner `folgen` tippen** (sonst landen die Dateien im Hauptordner) → **„Add file“ → „Upload files“** → MP3s auswählen → unten **„Commit changes“**.
 3. In `folgen/folgen.json` einen Eintrag ergänzen (Stift-Symbol zum Bearbeiten). Beispiel – Komma zwischen den Einträgen nicht vergessen:
    ```json
    {
@@ -95,13 +96,13 @@ werkzeuge/            Hilfsprogramme
 
 Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter „Actions“). Ein rotes ✗ heißt: in folgen.json ist ein Fehler.
 
-**Letzter Lauf (24.11.2026):** `pruefe-folgen.mjs` 0 Fehler (2 Hinweise: MP3s von Folge 1 fehlen noch), `browser-test.mjs` 0 Fehler.
+**Letzter Lauf (24.11.2026):** `pruefe-folgen.mjs` 0 Fehler (auch mit `--streng`: alle MP3s vorhanden), `browser-test.mjs` 0 Fehler.
 
 ## Hilfsprogramme
 - `werkzeuge/mache-icons.py` – erzeugt die App-Symbole neu (`python3 werkzeuge/mache-icons.py`, braucht Pillow).
 
 ## Offene Punkte
-- [ ] MP3s von Folge 1 hochladen (`folgen/folge-01-a.mp3`, `folgen/folge-01-b.mp3`).
+- [x] MP3s von Folge 1 hochgeladen.
 - [ ] Manuskript Folge 1 als `texte/folge-01.md` (liegt bisher nur als Audio vor; ggf. von Claude abtippen lassen).
 - [ ] GitHub Pages einschalten (siehe README).
 - [ ] Alles auf dem Handy und im Auto testen (Liste unten).
