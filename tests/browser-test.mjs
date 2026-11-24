@@ -178,13 +178,70 @@ try {
   pruefe(true, 'App öffnet sich ohne Internet');
   await seite.click('[data-nummer="1"] .f-haupt');
   await seite.evaluate(() => window.__podcast.springeZu(0));
-  await seite.click('#kPlay').catch(() => {});
+  if (await seite.evaluate(() => document.getElementById('audio').paused)) await seite.click('#kPlay').catch(() => {});
   await warte(() => window.__podcast.globalePos() > 1 || window.__podcast.aktTeil() === 1, null, 15000);
   pruefe(true, 'Folge 1 spielt ohne Internet');
   await seite.evaluate(() => window.__podcast.springeZu(8));
   await seite.waitForTimeout(500);
   pruefe(await seite.evaluate(() => window.__podcast.aktTeil()) === 1, 'Spulen ohne Internet klappt (Teil B)');
   await kontext.setOffline(false);
+
+  console.log('\n9) Übergang Teil A → B wie auf dem Handy (Autoplay-Sperre, hängendes Ende, Ladefehler)');
+  const browser2 = await chromium.launch({ args: ['--autoplay-policy=user-gesture-required'] });
+  try {
+    const k2 = await browser2.newContext({ viewport: { width: 400, height: 860 }, hasTouch: true, isMobile: true, serviceWorkers: 'block' });
+    const s2 = await k2.newPage();
+    s2.on('pageerror', (e) => jsFehler.push(e.message));
+    const w2 = (fn, arg, ms = 15000) => s2.waitForFunction(fn, arg, { timeout: ms });
+    const zustand = () => s2.evaluate(() => ({ teil: window.__podcast.aktTeil(), laeuft: !document.getElementById('audio').paused }));
+    await s2.goto(adresse);
+    await w2(() => document.querySelector('[data-nummer="1"] .f-dauer').textContent.includes('0:10'));
+    await s2.tap('[data-nummer="1"] .f-haupt');
+    await w2(() => !document.getElementById('audio').paused);
+    await s2.evaluate(() => { document.getElementById('audio').currentTime = 5.5; });
+    await w2(() => window.__podcast.aktTeil() === 1 && !document.getElementById('audio').paused);
+    pruefe(true, 'Mit Autoplay-Sperre (wie am Handy) läuft Teil B nach Teil A von selbst an');
+
+    // a) Handy meldet das Ende nicht: Teil A bleibt kurz vor Schluss stehen
+    await s2.evaluate(() => window.__podcast.springeZu(0));
+    await w2(() => window.__podcast.aktTeil() === 0 && !document.getElementById('audio').paused);
+    await s2.evaluate(() => { const a = document.getElementById('audio'); a.currentTime = a.duration - 0.3; a.pause(); });
+    await w2(() => window.__podcast.aktTeil() === 1 && !document.getElementById('audio').paused, null, 8000);
+    pruefe(true, 'Wächter: bleibt Teil A am Ende hängen, geht es nach ~2 s mit Teil B weiter');
+
+    // b) Play-Knopf am Ende von Teil A
+    await s2.tap('#kPlay'); // Pause
+    await s2.evaluate(() => window.__podcast.springeZu(5.8));
+    await w2(() => window.__podcast.aktTeil() === 0 && document.getElementById('audio').readyState >= 1);
+    await s2.evaluate(() => { const a = document.getElementById('audio'); a.currentTime = a.duration - 0.1; });
+    await s2.waitForTimeout(300);
+    await s2.tap('#kPlay');
+    await w2(() => window.__podcast.aktTeil() === 1 && !document.getElementById('audio').paused, null, 5000);
+    pruefe(true, 'Play-Knopf am Ende von Teil A startet Teil B');
+
+    // c) +15 s, obwohl die Länge von Teil B (noch) unbekannt ist
+    await s2.tap('#kPlay'); // Pause
+    await s2.evaluate(() => window.__podcast.springeZu(2));
+    await w2(() => window.__podcast.aktTeil() === 0);
+    await s2.evaluate(() => { window.__podcast.folgen()[0].dauern[1] = 0; });
+    await s2.tap('#kVor');
+    await w2(() => window.__podcast.aktTeil() === 1, null, 5000);
+    pruefe(true, '+15 s springt nach Teil B, auch wenn dessen Länge unbekannt ist');
+
+    // d) Teil B lädt mehrmals nicht (z. B. Funkloch) → danach hilft der Play-Knopf
+    await s2.evaluate(() => window.__podcast.springeZu(1));
+    await w2(() => window.__podcast.aktTeil() === 0);
+    await s2.tap('#kPlay'); // Play
+    await k2.route('**/folge-01-b.mp3', (r) => r.abort());
+    await s2.evaluate(() => window.__podcast.springeZu(7));
+    await w2(() => !document.getElementById('pMeldung').hidden, null, 10000);
+    await k2.unroute('**/folge-01-b.mp3');
+    if (!(await zustand()).laeuft) await s2.tap('#kPlay');
+    await w2(() => window.__podcast.aktTeil() === 1 && !document.getElementById('audio').paused && window.__podcast.globalePos() > 6.2, null, 8000);
+    pruefe(true, 'Nach Ladefehler: Play-Knopf lädt Teil B neu und spielt weiter');
+  } finally {
+    await browser2.close();
+  }
 
   pruefe(jsFehler.length === 0, 'Keine JavaScript-Fehler' + (jsFehler.length ? ': ' + jsFehler.join(' | ') : ''));
 } catch (e) {

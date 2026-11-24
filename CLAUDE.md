@@ -31,7 +31,8 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 - **Folge 2** am 24.11.2026 komplett aus Google Drive geholt (MP3s + Manuskript): `folge-02-a.mp3` (3:31) + `folge-02-b.mp3` (3:06) = **6:38 Min.** In Drive hießen die MP3s `folge-2-a.mp3` / `folge-2-b.mp3` (ohne führende Null); Claude hat sie beim Kopieren richtig benannt. Teil a: 3.300 Zeichen, Teil b: 2.863 Zeichen. Quelle: ELWIS-Basisfragen 14, 15, 34, 36, 37, 61.
 - Manuskript von Folge 1 liegt als `texte/folge-01.md` im Repository (aus Google Drive geholt). Teil a: 3.661 Zeichen, Teil b: 1.970 Zeichen. Quelle: ELWIS-Basisfragen 4, 5, 7, 10, 11, 12, 13, 16, 24, 72.
 - Design auf Marcs Corporate Design umgestellt (Orange & Blau wie die New York Mets).
-- Alle automatischen Tests laufen durch (siehe unten). Auf Marcs Handy ist noch nichts getestet.
+- **Fehler behoben (24.11.2026):** Auf Marcs Handy blieb Folge 1 nach Teil A stehen („Gleich geht es weiter mit Teil vier“), auch Play und Vorspringen halfen nicht. Ursache war hier nicht genau nachstellbar (auf dem Test-Computer lief der Wechsel). Die App war aber an mehreren Stellen anfällig, das ist jetzt abgesichert (siehe Entscheidung 11).
+- Alle automatischen Tests laufen durch (siehe unten). Auf Marcs Handy ist der Fix noch nicht getestet.
 
 ## Wichtige Entscheidungen
 1. **Eine Folge = mehrere MP3-Teile.** ElevenLabs vertont höchstens 5.000 Zeichen auf einmal. Darum besteht eine Folge oft aus 2 oder mehr Dateien. Die App zeigt trotzdem nur *eine* Folge: Teile laufen automatisch nacheinander, Balken, Restzeit, Weiterhören und ±15 s gelten für die ganze Folge. Die Umrechnung steckt in `js/zeitleiste.js`.
@@ -43,6 +44,12 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 7. **Automatische Wiederaufnahme:** Bricht die Wiedergabe ab (z. B. Funkloch), lädt die App den Teil bis zu 3-mal neu und macht an derselben Stelle weiter.
 8. **Lenkradtasten:** „Weiter/Zurück“ = nächste/vorige Folge; „Spulen“ = ±15 s.
 9. **Corporate Design: Orange & Blau wie die New York Mets.** Hintergrund dunkles Mets-Blau `#001a42`, Flächen Mets-Blau `#002d72`, große Knöpfe Mets-Orange `#ff5910` mit dunkelblauer Schrift, dazu Weiß. Farben stehen oben in `css/style.css` (`:root`), App-Symbol in `werkzeuge/mache-icons.py`. Dunkel bleibt es wegen der Nutzung im Auto.
+11. **Teilwechsel abgesichert (24.11.2026):**
+    - Beim nächsten Teil ruft die App `play()` **sofort** auf und wartet nicht aufs Laden. Grund: Android lädt bei gesperrtem Bildschirm oder im Hintergrund oft erst, wenn `play()` kommt. Vorher warteten App und Handy aufeinander.
+    - **Wächter:** Steht die Wiedergabe 2 Sekunden lang am Ende eines Teils (z. B. weil das Handy das Ende nicht meldet), geht es von selbst mit dem nächsten Teil weiter.
+    - **Play-Knopf** am Ende eines Teils startet den nächsten Teil; nach einem Ladefehler lädt Play den Teil neu.
+    - **+15 s** springt auch dann in den nächsten Teil, wenn dessen Länge noch nicht gemessen ist.
+    - Falls es auf dem Handy trotzdem hakt, wäre der Plan B: die Teile einer Folge vorab zu **einer** MP3 zusammenfügen (dann gibt es gar keinen Wechsel mehr).
 10. **Gespeicherte Daten** liegen im Browser-Speicher (`localStorage`, Schlüssel `bfp-daten-v1`). Export/Import als JSON-Datei. Import fragt vorher, weil er den aktuellen Stand ersetzt.
 
 ## Google Drive (Austausch zwischen Claude-Chat und Claude Code)
@@ -105,11 +112,11 @@ werkzeuge/            Hilfsprogramme
 | Test | Was er prüft | Befehl |
 |---|---|---|
 | `tests/pruefe-folgen.mjs` | folgen.json gültig (Nummern, Titel, Bereich, Dateinamen), welche MP3s vorhanden sind (+ Länge, wenn ffprobe da ist), ob es zu jeder Folge ein Manuskript `texte/folge-NN.md` gibt, ob die Anzahl „## Teil …“-Abschnitte zu den MP3s passt und ob jeder Teil höchstens 5.000 Zeichen hat, und ob die Teile richtig zusammengerechnet werden (`zeitleiste.js`) | `node tests/pruefe-folgen.mjs` (mit `--streng` zählen fehlende MP3s als Fehler) |
-| `tests/browser-test.mjs` | Die echte App in Chromium mit Test-Tönen: Liste, Filter, Teil A → B nahtlos, Restzeit, automatisch weiter, Zählen, Spulen über Teilgrenzen, Geschwindigkeit, Weiterhören nach Neustart, „Audio folgt bald“, Export/Import, Offline-Speichern (auch während des Abspielens), Spielen und Spulen ohne Internet, Sperrbildschirm-Titel | `node tests/browser-test.mjs` (braucht Playwright + ffmpeg, läuft in Claude-Sitzungen) |
+| `tests/browser-test.mjs` | Die echte App in Chromium mit Test-Tönen: Liste, Filter, Teil A → B nahtlos, Restzeit, automatisch weiter, Zählen, Spulen über Teilgrenzen, Geschwindigkeit, Weiterhören nach Neustart, „Audio folgt bald“, Export/Import, Offline-Speichern (auch während des Abspielens), Spielen und Spulen ohne Internet, Sperrbildschirm-Titel. **Abschnitt 9:** Teilwechsel wie am Handy (mit Autoplay-Sperre): hängendes Teil-Ende (Wächter), Play am Ende von Teil A, +15 s bei unbekannter Länge, Play nach Ladefehler | `node tests/browser-test.mjs` (braucht Playwright + ffmpeg, läuft in Claude-Sitzungen) |
 
 Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter „Actions“). Ein rotes ✗ heißt: in folgen.json ist ein Fehler.
 
-**Letzter Lauf (24.11.2026, nach Folge 2):** `pruefe-folgen.mjs --streng` 0 Fehler (alle 4 MP3s vorhanden, Manuskripte Folge 1 und 2 geprüft), `browser-test.mjs` 0 Fehler. Zusätzlich die App mit den echten Dateien geöffnet: Folge 2 erscheint mit 6:38 Min.
+**Letzter Lauf (24.11.2026, nach dem Fix Teilwechsel):** `pruefe-folgen.mjs --streng` 0 Fehler, `browser-test.mjs` 0 Fehler (3-mal hintereinander). Gegenprobe: Mit der alten App-Version schlägt Abschnitt 9 fehl (Wiedergabe bleibt am Ende von Teil A hängen). Zusätzlich mit den echten MP3s von Folge 1 und Handy-Ansicht geprüft: Teil A → B läuft durch.
 
 ## Hilfsprogramme
 - `werkzeuge/mache-icons.py` – erzeugt die App-Symbole neu (`python3 werkzeuge/mache-icons.py`, braucht Pillow).
@@ -151,6 +158,8 @@ Ziel: Alle Folgen später kostenlos auf YouTube und Spotify veröffentlichen.
 - [ ] Antippen der Folge startet die Wiedergabe
 
 **Mehrere Teile**
+- [ ] **Neu nach Fix:** Folge 1 läuft nach „Gleich geht es weiter mit Teil vier“ von selbst mit Teil B weiter – einmal mit Bildschirm an, einmal mit gesperrtem Bildschirm
+- [ ] Falls es doch stehen bleibt: Play drücken → Teil B startet (bitte Claude Bescheid geben, auch wie lange es stand)
 - [ ] Teil A geht ohne spürbare Pause in Teil B über
 - [ ] Der Balken läuft über die ganze Folge (nicht nur über einen Teil)
 - [ ] Restzeit stimmt für die ganze Folge

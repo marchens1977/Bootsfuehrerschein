@@ -228,28 +228,63 @@
     el.pMeldung.hidden = !text;
   }
 
+  function spiele() {
+    var p = audio.play();
+    if (p && p.catch) p.catch(function () { zeigePlay(); });
+  }
+
+  var ladeNr = 0;      // zählt jedes Laden eines Teils (damit ein Teil-Ende nur einmal verbucht wird)
+  var endeNr = -1;
   function ladeTeil(teil, zeit, abspielen, neuLaden) {
     var f = folge();
     aktTeil = teil;
     letzteZeit = zeit || 0;
+    ladeNr++;
     return new Promise(function (fertig) {
       var url = teilUrl(f.teile[teil]);
+      var erledigt = false;
       var weiter = function () {
+        if (erledigt) return;
+        erledigt = true;
         audio.removeEventListener('loadedmetadata', weiter);
-        if (zeit > 0) { try { audio.currentTime = zeit; } catch (e) { /* egal */ } }
-        audio.defaultPlaybackRate = speicher.einstellungen.tempo;
-        audio.playbackRate = speicher.einstellungen.tempo;
-        if (abspielen) {
-          var p = audio.play();
-          if (p && p.catch) p.catch(function () { zeigePlay(); });
+        if (Math.abs((audio.currentTime || 0) - (zeit || 0)) > 0.3) {
+          try { audio.currentTime = zeit; } catch (e) { /* egal */ }
         }
+        audio.playbackRate = speicher.einstellungen.tempo;
         fertig();
       };
-      if (!neuLaden && audio.getAttribute('src') === url && audio.readyState >= 1 && !audio.error) { weiter(); return; }
+      audio.defaultPlaybackRate = speicher.einstellungen.tempo;
+      if (!neuLaden && audio.getAttribute('src') === url && audio.readyState >= 1 && !audio.error) {
+        weiter();
+        if (abspielen) spiele();
+        return;
+      }
       audio.addEventListener('loadedmetadata', weiter);
       audio.src = url;
       audio.load();
+      audio.playbackRate = speicher.einstellungen.tempo;
+      if (zeit > 0) { try { audio.currentTime = zeit; } catch (e) { /* wird nach dem Laden gesetzt */ } }
+      // Wichtig fürs Handy: play() SOFORT aufrufen, nicht erst nach dem Laden.
+      // Android lädt bei gesperrtem Bildschirm / im Hintergrund oft erst, wenn play() kommt.
+      // Würde die App aufs Laden warten, warten beide aufeinander und es geht nicht weiter.
+      if (abspielen) spiele();
     });
+  }
+
+  // Ist der aktuelle Teil (fast) zu Ende?
+  function teilAmEnde() {
+    if (audio.ended) return true;
+    var d = audio.duration;
+    return isFinite(d) && d > 0 && audio.currentTime >= d - 0.5;
+  }
+
+  // Ein Teil ist zu Ende: nächster Teil oder Folge fertig. Wird nur einmal pro Teil ausgeführt.
+  function teilZuEnde() {
+    var f = folge(); if (!f) return;
+    if (endeNr === ladeNr) return;
+    endeNr = ladeNr;
+    if (aktTeil < f.teile.length - 1) ladeTeil(aktTeil + 1, 0, true);   // nahtlos zum nächsten Teil
+    else folgeFertig();
   }
 
   function starteFolge(index, opt) {
@@ -301,10 +336,23 @@
 
   function springeZu(sekunden) {
     var f = folge(); if (!f) return;
-    var g = gesamtVon(f);
-    var t = Math.max(0, Math.min(sekunden, g ? g - 0.25 : sekunden));
-    var ziel = Z.findeTeil(f.dauern, t);
-    var spielte = !audio.paused;
+    var ziel;
+    var t = Math.max(0, sekunden);
+    if (dauerBekannt(f)) {
+      var g = gesamtVon(f);
+      ziel = Z.findeTeil(f.dauern, Math.min(t, g - 0.25));
+    } else {
+      // Länge späterer Teile noch unbekannt (z. B. Messung auf dem Handy fehlgeschlagen):
+      // trotzdem über das Ende des aktuellen Teils hinaus in den nächsten Teil springen.
+      var start = Z.startZeiten(f.dauern)[aktTeil];
+      var dauer = f.dauern[aktTeil] || (isFinite(audio.duration) ? audio.duration : 0);
+      var letzter = aktTeil >= f.teile.length - 1;
+      if (t < start) ziel = Z.findeTeil(f.dauern.slice(0, aktTeil), t);
+      else if (dauer && t >= start + dauer && !letzter) ziel = { teil: aktTeil + 1, zeit: t - start - dauer };
+      else ziel = { teil: aktTeil, zeit: dauer ? Math.min(t - start, dauer - 0.25) : t - start };
+    }
+    // Hängt die Wiedergabe am Ende eines Teils, gilt sie trotzdem als "läuft"
+    var spielte = !audio.paused || (sollSpielen && teilAmEnde());
     if (ziel.teil === aktTeil) {
       try { audio.currentTime = ziel.zeit; } catch (e) { /* egal */ }
       zeigeZeit();
@@ -319,7 +367,12 @@
     if (f.geprueft && f.fehlt) return;
     if (audio.paused) {
       if (!audio.getAttribute('src')) { starteFolge(aktuell, { abspielen: true, position: fortschrittVon(f.nummer).pos || 0 }); return; }
-      var p = audio.play(); if (p && p.catch) p.catch(function () {});
+      sollSpielen = true;
+      // Nach einem Ladefehler: Teil an derselben Stelle neu laden
+      if (audio.error) { versuche = []; meldung(''); ladeTeil(aktTeil, letzteZeit, true, true); return; }
+      // Teil ist zu Ende, aber der nächste kam nicht: jetzt zum nächsten Teil
+      if (teilAmEnde() && aktTeil < f.teile.length - 1) { endeNr = ladeNr; ladeTeil(aktTeil + 1, 0, true); return; }
+      spiele();
     } else {
       sollSpielen = false;
       audio.pause();
@@ -349,6 +402,7 @@
     } else if (speicher.einstellungen.autoWeiter && aktuell + 1 < folgen.length) {
       starteFolge(aktuell + 1, { abspielen: true, position: 0, scrollen: false });
     } else {
+      sollSpielen = false;
       ladeTeil(0, 0, false).then(zeigeZeit);
     }
   }
@@ -393,11 +447,17 @@
   });
   audio.addEventListener('play', function () { zeigePlay(); meldung(''); setzeMediaStatus('playing'); });
   audio.addEventListener('pause', function () { zeigePlay(); speicherePosition(); zeigeListe(); setzeMediaStatus('paused'); });
-  audio.addEventListener('ended', function () {
-    var f = folge();
-    if (aktTeil < f.teile.length - 1) ladeTeil(aktTeil + 1, 0, true);   // nahtlos zum nächsten Teil
-    else folgeFertig();
-  });
+  audio.addEventListener('ended', teilZuEnde);
+  // Wächter: Manche Handys melden das Ende eines Teils nicht ("ended" fehlt) und bleiben
+  // am Ende stehen. Steht die Wiedergabe 2 Sekunden lang am Ende, geht es von selbst weiter.
+  var wache = { zeit: -1, mal: 0 };
+  setInterval(function () {
+    if (aktuell < 0 || !sollSpielen || !audio.getAttribute('src') || audio.error || !teilAmEnde()) { wache.mal = 0; return; }
+    if (audio.paused || audio.currentTime === wache.zeit) wache.mal++;
+    else wache.mal = 0;
+    wache.zeit = audio.currentTime;
+    if (wache.mal >= 2) { wache.mal = 0; teilZuEnde(); }
+  }, 1000);
   // Abbruch (z. B. Funkloch): bis zu 3x automatisch an derselben Stelle weitermachen
   var sollSpielen = false, letzteZeit = 0, versuche = [];
   audio.addEventListener('playing', function () { sollSpielen = true; });
