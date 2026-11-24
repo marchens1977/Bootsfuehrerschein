@@ -1,0 +1,10 @@
+{
+  "folgen": [
+    {
+      "nummer": 1,
+      "titel": "Lichter und Signale",
+      "bereich": "Basis",
+      "teile": ["folge-01-a.mp3", "folge-01-b.mp3"]
+    }
+  ]
+}

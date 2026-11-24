@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1622">
+  <title>Bootsführerschein-Podcast</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="kopf">
+    <h1>⚓ Bootsführerschein-Podcast</h1>
+    <button id="menueKnopf" class="klein" aria-label="Menü">☰</button>
+  </header>
+
+  <div id="menue" class="menue" hidden>
+    <button id="exportKnopf">💾 Fortschritt sichern (Export)</button>
+    <label class="knopf-label">📂 Fortschritt einlesen (Import)
+      <input id="importDatei" type="file" accept="application/json,.json" hidden>
+    </label>
+    <p class="hinweis" id="speicherInfo"></p>
+  </div>
+
+  <main>
+    <button id="weiterhoeren" class="weiterhoeren" hidden>
+      <span class="wh-oben">▶ Weiterhören</span>
+      <span class="wh-titel" id="whTitel"></span>
+      <span class="wh-zeit" id="whZeit"></span>
+    </button>
+
+    <section id="player" class="player" hidden>
+      <div class="p-bereich" id="pBereich"></div>
+      <div class="p-titel" id="pTitel"></div>
+      <div class="p-meldung" id="pMeldung" hidden></div>
+      <input id="pBalken" class="balken" type="range" min="0" max="1000" value="0" aria-label="Position in der Folge">
+      <div class="p-zeiten"><span id="pZeit">0:00</span><span id="pRest">-0:00</span></div>
+      <div class="p-knoepfe">
+        <button id="kVorige" class="rund" aria-label="Vorige Folge">⏮</button>
+        <button id="kZurueck" class="rund" aria-label="15 Sekunden zurück">↺<small>15</small></button>
+        <button id="kPlay" class="rund gross" aria-label="Abspielen">▶</button>
+        <button id="kVor" class="rund" aria-label="15 Sekunden vor">↻<small>15</small></button>
+        <button id="kNaechste" class="rund" aria-label="Nächste Folge">⏭</button>
+      </div>
+      <div class="p-optionen">
+        <div class="tempo" role="group" aria-label="Geschwindigkeit">
+          <button data-tempo="0.8">0,8x</button>
+          <button data-tempo="1">1x</button>
+          <button data-tempo="1.25">1,25x</button>
+          <button data-tempo="1.5">1,5x</button>
+        </div>
+        <div class="schalter">
+          <button id="kAutoWeiter" class="umschalter">Automatisch weiter</button>
+          <button id="kWiederholen" class="umschalter">Folge wiederholen</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="filter" role="group" aria-label="Bereich filtern">
+      <button data-filter="Alle" class="aktiv">Alle</button>
+      <button data-filter="Basis">Basis</button>
+      <button data-filter="See">See</button>
+      <button data-filter="Binnen">Binnen</button>
+    </nav>
+
+    <ul id="liste" class="liste"></ul>
+    <p id="listeMeldung" class="hinweis"></p>
+  </main>
+
+  <audio id="audio" preload="metadata"></audio>
+
+  <script src="js/zeitleiste.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
