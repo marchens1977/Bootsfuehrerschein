@@ -123,6 +123,14 @@ Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter �
 - [ ] Alles auf dem Handy und im Auto testen (Liste unten).
 - [ ] Ideen für später: Schlaf-Timer, Lesezeichen/Kapitel, „nur ungehörte Folgen“.
 
+### Veröffentlichung auf YouTube und Spotify – bitte zuerst lesen
+Wenn Marc wieder nach YouTube oder Spotify fragt, gilt Folgendes (Stand 24.11.2026):
+- Geplant: alle Folgen **kostenlos** auf YouTube und Spotify veröffentlichen.
+- Schon geklärt: Quellen nur amtlich (ELWIS), Stimme „Marco“ ohne Einschränkungen (2 Jahre Kündigungsfrist), ElevenLabs-Konto war beim Vertonen immer bezahlt. Einzelheiten stehen unten.
+- Noch offen: ELWIS-Nutzungshinweise lesen. Hinweis „KI-Stimme (ElevenLabs)“ in jede Beschreibung schreiben.
+- **Neue Folgen:** Nur amtliche Quellen nutzen (ELWIS, Gesetze), keine Texte aus ONWATER-Kursen, Videos, der App oder Lehrbüchern. Immer mit bezahltem Konto und derselben Stimme vertonen. Die Quellen in jedem Manuskript unter „Quelle“ und „Notizen“ eintragen.
+- Noch nicht gebaut: Cover-Bild, Kanal und Beschreibungstexte. Ein Cover dürfte kein Logo der New York Mets zeigen, nur die Farben.
+
 ### Prüfung Quellen, Stimme und Veröffentlichung (24.11.2026)
 Ziel: Alle Folgen später kostenlos auf YouTube und Spotify veröffentlichen.
 - **Quellen:** Laut Manuskripten nur der amtliche ELWIS-Fragenkatalog (Basisfragen, Stand August 2023). Folge 1 nennt dazu die Binnenschifffahrtsstraßen-Ordnung (Gesetz). Kein Hinweis auf ONWATER, Bootsschulen, Kursunterlagen, Videos oder Lehrbücher, weder in den Dateien noch in der Git-Geschichte.
@@ -130,7 +138,7 @@ Ziel: Alle Folgen später kostenlos auf YouTube und Spotify veröffentlichen.
 - **Stimme:** „Marco – Warm & Friendly Narrator“, voice_id `xpx2H2DghGxsTBJ1pQO1`. Laut ElevenLabs eine **Library-Stimme** (Kategorie „professional“, also die Stimme eines echten Sprechers aus der Voice Library). Keine Standardstimme, nicht selbst erstellt. Link: https://elevenlabs.io/app/voice-library?voiceId=xpx2H2DghGxsTBJ1pQO1
 - **Tarif:** ElevenLabs „Starter“ (bezahlt). Der erlaubt laut ElevenLabs normalerweise auch kommerzielle Veröffentlichung. Das ist eine Einschätzung und keine Rechtsberatung.
 - **Ergebnis:** Im Projekt spricht nichts gegen die Veröffentlichung. Diese Punkte muss Marc noch selbst prüfen:
-  - [ ] War der Starter-Tarif schon aktiv, als Folge 1 und 2 vertont wurden? (Mit dem kostenlosen Tarif ist Veröffentlichen eingeschränkt.)
+  - [x] War der Starter-Tarif schon aktiv, als Folge 1 und 2 vertont wurden? **Ja, laut Marc (24.11.2026): Er hatte von Anfang an ein bezahltes ElevenLabs-Konto, auch beim Vertonen aller bisherigen Folgen.**
   - [x] Auf der Seite der Stimme „Marco“ in ElevenLabs nachsehen, ob der Sprecher Einschränkungen festgelegt hat. **Geprüft am 24.11.2026 per Screenshot von Marc:** „2 Jahre-Benachrichtigung“ (Kündigungsfrist 2 Jahre: Zieht der Sprecher die Stimme zurück, darf Marc sie noch 2 Jahre nutzen), 358 Benutzer, keine Einschränkung und kein Hinweis „nicht kommerziell“ angezeigt, keine Live-Moderation. Die Beschreibung nennt ausdrücklich Lernmaterial („educational materials, e-learning“). Vom Sprecher her spricht also nichts gegen YouTube und Spotify.
   - [ ] Nutzungshinweise auf ELWIS zum Fragenkatalog lesen (vermutlich frei nutzbares amtliches Werk, aber nicht bestätigt).
   - [ ] Bei YouTube und Spotify in die Beschreibung schreiben: „Gesprochen mit einer KI-Stimme (ElevenLabs)“.
