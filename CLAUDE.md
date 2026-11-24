@@ -28,6 +28,7 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 - `folgen/folgen.json` enthält Folge 1 „Lichter und Signale“ (Basis, 2 Teile).
 - **Die MP3s von Folge 1 fehlen noch** → die App zeigt „Audio folgt bald“, bis Marc sie hochlädt.
 - Manuskript von Folge 1 liegt nur als Audio im Claude-Projekt vor → `texte/` enthält nur eine Erklärung.
+- Design auf Marcs Corporate Design umgestellt (Orange & Blau wie die New York Mets).
 - Alle automatischen Tests laufen durch (siehe unten). Auf Marcs Handy ist noch nichts getestet.
 
 ## Wichtige Entscheidungen
@@ -39,7 +40,8 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 6. **Offline:** Ein Service Worker (`sw.js`) speichert die App selbst. MP3s werden gespeichert, wenn man „⬇ Offline speichern“ antippt **oder automatisch, sobald eine Folge fertig gehört ist**. (Automatisch *während* des Abspielens speichern hat im Test die Wiedergabe gestört – darum erst am Ende.)
 7. **Automatische Wiederaufnahme:** Bricht die Wiedergabe ab (z. B. Funkloch), lädt die App den Teil bis zu 3-mal neu und macht an derselben Stelle weiter.
 8. **Lenkradtasten:** „Weiter/Zurück“ = nächste/vorige Folge; „Spulen“ = ±15 s.
-9. **Gespeicherte Daten** liegen im Browser-Speicher (`localStorage`, Schlüssel `bfp-daten-v1`). Export/Import als JSON-Datei. Import fragt vorher, weil er den aktuellen Stand ersetzt.
+9. **Corporate Design: Orange & Blau wie die New York Mets.** Hintergrund dunkles Mets-Blau `#001a42`, Flächen Mets-Blau `#002d72`, große Knöpfe Mets-Orange `#ff5910` mit dunkelblauer Schrift, dazu Weiß. Farben stehen oben in `css/style.css` (`:root`), App-Symbol in `werkzeuge/mache-icons.py`. Dunkel bleibt es wegen der Nutzung im Auto.
+10. **Gespeicherte Daten** liegen im Browser-Speicher (`localStorage`, Schlüssel `bfp-daten-v1`). Export/Import als JSON-Datei. Import fragt vorher, weil er den aktuellen Stand ersetzt.
 
 ## Vertonungs-Einstellungen (damit alle Folgen gleich klingen)
 | Einstellung | Wert |
@@ -139,6 +141,10 @@ Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter �
 - [ ] „⬇ Offline speichern“ bei Folge 1 → Knopf zeigt „✓ Offline“
 - [ ] Flugmodus an → App öffnen → Folge 1 spielt und lässt sich spulen
 - [ ] Fertig gehörte Folge zeigt danach automatisch „✓ Offline“
+
+**Design**
+- [ ] Farben Orange/Blau gefallen und sind im Auto gut lesbar (auch bei Sonne)
+- [ ] Neues App-Symbol (orange Kopfhörer auf Blau) erscheint auf dem Startbildschirm (ggf. App einmal entfernen und neu hinzufügen)
 
 **Sichern**
 - [ ] Menü ☰ → „Fortschritt sichern“ lädt eine Datei herunter
