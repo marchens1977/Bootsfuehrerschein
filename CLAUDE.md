@@ -27,7 +27,7 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 - App fertig gebaut: Liste, Filter, Player, Weiterhören, Fortschritt, Geschwindigkeit, automatisch weiter / wiederholen, Sperrbildschirm-Steuerung, Export/Import, Offline-Speicher, installierbar (PWA).
 - `folgen/folgen.json` enthält Folge 1 „Lichter und Signale“ und Folge 2 „Ausweichen und Begegnen“ (beide Basis, je 2 Teile).
 - MP3s von Folge 1 sind da: `folge-01-a.mp3` (4:04) + `folge-01-b.mp3` (2:17) = **6:21 Min.** Marc hatte sie versehentlich in den Hauptordner hochgeladen, Claude hat sie nach `folgen/` verschoben. Übergang A → B mit den echten Dateien im Test-Browser geprüft.
-- GitHub Pages ist noch **nicht** eingeschaltet (kann Claude nicht selbst, Marc muss es in den Settings tun).
+- **GitHub Pages ist eingeschaltet** (24.11.2026). Die Veröffentlichung („pages build and deployment“ im Reiter Actions) ist für den Stand mit Folge 2 erfolgreich gelaufen, und Marc kann die App öffnen. Claude-Sitzungen können github.io nicht aufrufen (Netzwerk gesperrt). Darum prüft Claude die Veröffentlichung über die Actions auf GitHub, nicht über die Seite selbst.
 - **Folge 2** am 24.11.2026 komplett aus Google Drive geholt (MP3s + Manuskript): `folge-02-a.mp3` (3:31) + `folge-02-b.mp3` (3:06) = **6:38 Min.** In Drive hießen die MP3s `folge-2-a.mp3` / `folge-2-b.mp3` (ohne führende Null); Claude hat sie beim Kopieren richtig benannt. Teil a: 3.300 Zeichen, Teil b: 2.863 Zeichen. Quelle: ELWIS-Basisfragen 14, 15, 34, 36, 37, 61.
 - Manuskript von Folge 1 liegt als `texte/folge-01.md` im Repository (aus Google Drive geholt). Teil a: 3.661 Zeichen, Teil b: 1.970 Zeichen. Quelle: ELWIS-Basisfragen 4, 5, 7, 10, 11, 12, 13, 16, 24, 72.
 - Design auf Marcs Corporate Design umgestellt (Orange & Blau wie die New York Mets).
@@ -119,7 +119,7 @@ Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter �
 - [x] Manuskript Folge 1 als `texte/folge-01.md`.
 - [x] Ersten MP3-Transport Drive → Repository mit Folge 2 testen.
 - [x] Folge 2 „Ausweichen und Begegnen“ eingebunden.
-- [ ] GitHub Pages einschalten (siehe README).
+- [x] GitHub Pages einschalten.
 - [ ] Alles auf dem Handy und im Auto testen (Liste unten).
 - [ ] Ideen für später: Schlaf-Timer, Lesezeichen/Kapitel, „nur ungehörte Folgen“.
 
