@@ -5,6 +5,12 @@
       "titel": "Lichter und Signale",
       "bereich": "Basis",
       "teile": ["folge-01-a.mp3", "folge-01-b.mp3"]
+    },
+    {
+      "nummer": 2,
+      "titel": "Ausweichen und Begegnen",
+      "bereich": "Basis",
+      "teile": ["folge-02-a.mp3", "folge-02-b.mp3"]
     }
   ]
 }

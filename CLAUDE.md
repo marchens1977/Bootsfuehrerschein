@@ -25,9 +25,10 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 
 ## Aktueller Stand (24.11.2026)
 - App fertig gebaut: Liste, Filter, Player, Weiterhören, Fortschritt, Geschwindigkeit, automatisch weiter / wiederholen, Sperrbildschirm-Steuerung, Export/Import, Offline-Speicher, installierbar (PWA).
-- `folgen/folgen.json` enthält Folge 1 „Lichter und Signale“ (Basis, 2 Teile).
+- `folgen/folgen.json` enthält Folge 1 „Lichter und Signale“ und Folge 2 „Ausweichen und Begegnen“ (beide Basis, je 2 Teile).
 - MP3s von Folge 1 sind da: `folge-01-a.mp3` (4:04) + `folge-01-b.mp3` (2:17) = **6:21 Min.** Marc hatte sie versehentlich in den Hauptordner hochgeladen, Claude hat sie nach `folgen/` verschoben. Übergang A → B mit den echten Dateien im Test-Browser geprüft.
 - GitHub Pages ist noch **nicht** eingeschaltet (kann Claude nicht selbst, Marc muss es in den Settings tun).
+- **Folge 2** am 24.11.2026 komplett aus Google Drive geholt (MP3s + Manuskript): `folge-02-a.mp3` (3:31) + `folge-02-b.mp3` (3:06) = **6:38 Min.** In Drive hießen die MP3s `folge-2-a.mp3` / `folge-2-b.mp3` (ohne führende Null); Claude hat sie beim Kopieren richtig benannt. Teil a: 3.300 Zeichen, Teil b: 2.863 Zeichen. Quelle: ELWIS-Basisfragen 14, 15, 34, 36, 37, 61.
 - Manuskript von Folge 1 liegt als `texte/folge-01.md` im Repository (aus Google Drive geholt). Teil a: 3.661 Zeichen, Teil b: 1.970 Zeichen. Quelle: ELWIS-Basisfragen 4, 5, 7, 10, 11, 12, 13, 16, 24, 72.
 - Design auf Marcs Corporate Design umgestellt (Orange & Blau wie die New York Mets).
 - Alle automatischen Tests laufen durch (siehe unten). Auf Marcs Handy ist noch nichts getestet.
@@ -53,7 +54,7 @@ Neue Folgen (MP3s + Manuskript) kommen zuerst in Marcs Google Drive, Claude Code
 | texte (Manuskripte) | https://drive.google.com/drive/folders/1H75fH5yBp8U2K08bUR6kKn3xQDYiZKZ3 |
 
 So holt Claude Code eine Datei: Google-Drive-Verbindung → im Ordner suchen (`parentId = '<Ordner-ID>'`) → `download_file_content`. Die Datei landet als Datei in der Sitzung und wird dann ins Repository kopiert. Direkter Download über drive.google.com ist in der Sitzung gesperrt, ist aber auch nicht nötig.
-- Getestet am 24.11.2026 mit `folge-01.md` (Text). **MP3s auf diesem Weg sind noch nicht getestet**; das passiert mit Folge 2.
+- Getestet am 24.11.2026 mit `folge-01.md` (Text) und mit Folge 2 (2 MP3s + Text): **klappt auch mit MP3s**, die Dateien kamen unverändert an (Größe und Länge geprüft).
 - MP3s von Folge 1 liegen schon im Repository und sollen nicht angefasst werden.
 
 ## Vertonungs-Einstellungen (damit alle Folgen gleich klingen)
@@ -108,7 +109,7 @@ werkzeuge/            Hilfsprogramme
 
 Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter „Actions“). Ein rotes ✗ heißt: in folgen.json ist ein Fehler.
 
-**Letzter Lauf (24.11.2026):** `pruefe-folgen.mjs` 0 Fehler (auch mit `--streng`: alle MP3s vorhanden, Manuskript Folge 1 geprüft), `browser-test.mjs` 0 Fehler.
+**Letzter Lauf (24.11.2026, nach Folge 2):** `pruefe-folgen.mjs --streng` 0 Fehler (alle 4 MP3s vorhanden, Manuskripte Folge 1 und 2 geprüft), `browser-test.mjs` 0 Fehler. Zusätzlich die App mit den echten Dateien geöffnet: Folge 2 erscheint mit 6:38 Min.
 
 ## Hilfsprogramme
 - `werkzeuge/mache-icons.py` – erzeugt die App-Symbole neu (`python3 werkzeuge/mache-icons.py`, braucht Pillow).
@@ -116,7 +117,8 @@ Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter �
 ## Offene Punkte
 - [x] MP3s von Folge 1 hochgeladen.
 - [x] Manuskript Folge 1 als `texte/folge-01.md`.
-- [ ] Ersten MP3-Transport Drive → Repository mit Folge 2 testen.
+- [x] Ersten MP3-Transport Drive → Repository mit Folge 2 testen.
+- [x] Folge 2 „Ausweichen und Begegnen“ eingebunden.
 - [ ] GitHub Pages einschalten (siehe README).
 - [ ] Alles auf dem Handy und im Auto testen (Liste unten).
 - [ ] Ideen für später: Schlaf-Timer, Lesezeichen/Kapitel, „nur ungehörte Folgen“.
@@ -139,7 +141,8 @@ Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter �
 - [ ] Status zeigt „Neu“ → „Angefangen“ → „Fertig · 1× komplett gehört“
 - [ ] Nach zweimal komplett Hören steht „2×“ da
 - [ ] Geschwindigkeit 0,8x / 1x / 1,25x / 1,5x hörbar und bleibt nach Neustart erhalten
-- [ ] „Automatisch weiter“ an: nach dem Ende startet die nächste Folge (ab Folge 2 testbar)
+- [ ] „Automatisch weiter“ an: nach dem Ende von Folge 1 startet Folge 2
+- [ ] Folge 2 zeigt „Ausweichen und Begegnen“, „Basis“ und 6:38 Min., Teil A → B läuft durch
 - [ ] „Folge wiederholen“ an: Folge startet nach dem Ende von vorn
 
 **Sperrbildschirm und Auto**
