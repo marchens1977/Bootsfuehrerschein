@@ -12,7 +12,7 @@
 </head>
 <body>
   <header class="kopf">
-    <h1>⚓ Bootsführerschein-Podcast</h1>
+    <h1><span aria-hidden="true">⚓</span> Bootsführerschein-Podcast</h1>
     <button id="menueKnopf" class="klein" aria-label="Menü">☰</button>
   </header>
 
@@ -38,11 +38,22 @@
       <input id="pBalken" class="balken" type="range" min="0" max="1000" value="0" aria-label="Position in der Folge">
       <div class="p-zeiten"><span id="pZeit">0:00</span><span id="pRest">-0:00</span></div>
       <div class="p-knoepfe">
-        <button id="kVorige" class="rund" aria-label="Vorige Folge">⏮</button>
-        <button id="kZurueck" class="rund" aria-label="15 Sekunden zurück">↺<small>15</small></button>
-        <button id="kPlay" class="rund gross" aria-label="Abspielen">▶</button>
-        <button id="kVor" class="rund" aria-label="15 Sekunden vor">↻<small>15</small></button>
-        <button id="kNaechste" class="rund" aria-label="Nächste Folge">⏭</button>
+        <button id="kVorige" class="rund" aria-label="Vorige Folge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="2.6" height="14" rx="1"/><path d="M19 5.8v12.4a.8.8 0 0 1-1.2.7L9 12.7a.8.8 0 0 1 0-1.4l8.8-6.2a.8.8 0 0 1 1.2.7z"/></svg>
+        </button>
+        <button id="kZurueck" class="rund sprung" aria-label="15 Sekunden zurück">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="linie"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.5 2.8v4.2h4.2"/></svg><span>15</span>
+        </button>
+        <button id="kPlay" class="rund gross" aria-label="Abspielen">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5.2v13.6a1 1 0 0 0 1.5.9l10.6-6.8a1 1 0 0 0 0-1.8L9.5 4.3A1 1 0 0 0 8 5.2z"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause"><rect x="6" y="4.5" width="4.2" height="15" rx="1.2"/><rect x="13.8" y="4.5" width="4.2" height="15" rx="1.2"/></svg>
+        </button>
+        <button id="kVor" class="rund sprung" aria-label="15 Sekunden vor">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="linie"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M17.5 2.8v4.2h-4.2"/></svg><span>15</span>
+        </button>
+        <button id="kNaechste" class="rund" aria-label="Nächste Folge">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="16.4" y="5" width="2.6" height="14" rx="1"/><path d="M5 5.8v12.4a.8.8 0 0 0 1.2.7l8.8-6.2a.8.8 0 0 0 0-1.4L6.2 5.1A.8.8 0 0 0 5 5.8z"/></svg>
+        </button>
       </div>
       <div class="p-optionen">
         <div class="tempo" role="group" aria-label="Geschwindigkeit">

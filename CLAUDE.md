@@ -32,7 +32,9 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
 - Manuskript von Folge 1 liegt als `texte/folge-01.md` im Repository (aus Google Drive geholt). Teil a: 3.661 Zeichen, Teil b: 1.970 Zeichen. Quelle: ELWIS-Basisfragen 4, 5, 7, 10, 11, 12, 13, 16, 24, 72.
 - Design auf Marcs Corporate Design umgestellt (Orange & Blau wie die New York Mets).
 - **Fehler behoben (24.11.2026):** Auf Marcs Handy blieb Folge 1 nach Teil A stehen („Gleich geht es weiter mit Teil vier“), auch Play und Vorspringen halfen nicht. Ursache war hier nicht genau nachstellbar (auf dem Test-Computer lief der Wechsel). Die App war aber an mehreren Stellen anfällig, das ist jetzt abgesichert (siehe Entscheidung 11).
-- Alle automatischen Tests laufen durch (siehe unten). Auf Marcs Handy ist der Fix noch nicht getestet.
+- Der Fix ist am 24.11.2026 auf Marcs Handy getestet: **Die Wiedergabe läuft jetzt durch.**
+- **Design überarbeitet (24.11.2026, siehe Entscheidung 12):** Player-Knöpfe sind auf Marcs Handy oval und klobig gewesen. Jetzt sind sie kreisrund, kleiner und haben eigene Symbole. Außerdem: Balken orange, Tempo als Leiste, Titel einzeilig, „Offline speichern“ passt in den Rand. Auf dem Handy noch nicht angesehen.
+- Alle automatischen Tests laufen durch (siehe unten).
 
 ## Wichtige Entscheidungen
 1. **Eine Folge = mehrere MP3-Teile.** ElevenLabs vertont höchstens 5.000 Zeichen auf einmal. Darum besteht eine Folge oft aus 2 oder mehr Dateien. Die App zeigt trotzdem nur *eine* Folge: Teile laufen automatisch nacheinander, Balken, Restzeit, Weiterhören und ±15 s gelten für die ganze Folge. Die Umrechnung steckt in `js/zeitleiste.js`.
@@ -50,6 +52,11 @@ Reihenfolge: erst **Basis** (gilt für Binnen und See), dann **See**, dann **Bin
     - **Play-Knopf** am Ende eines Teils startet den nächsten Teil; nach einem Ladefehler lädt Play den Teil neu.
     - **+15 s** springt auch dann in den nächsten Teil, wenn dessen Länge noch nicht gemessen ist.
     - Falls es auf dem Handy trotzdem hakt, wäre der Plan B: die Teile einer Folge vorab zu **einer** MP3 zusammenfügen (dann gibt es gar keinen Wechsel mehr).
+12. **Design-Feinschliff (24.11.2026):**
+    - **Ursache der ovalen Knöpfe:** 5 Knöpfe (4 × 64 px + 96 px) waren breiter als die Player-Karte auf einem 360-px-Handy. Der Browser hat sie in der Breite gestaucht, die Höhe blieb, also wurden sie oval. Jetzt: `flex: none` und feste Breite = Höhe (50 px, Play 72 px, auf Handys unter 340 px 44/62 px).
+    - **Symbole** sind eigene kleine Zeichnungen (SVG) in `index.html` statt Schriftzeichen (⏮ ▶ ⏸). Die sehen auf jedem Handy gleich aus. Play/Pause wechselt über die Klasse `laeuft` am Play-Knopf.
+    - **Fortschrittsbalken:** schmal, orange bis zur aktuellen Stelle (`app.js` setzt die CSS-Variable `--wert`).
+    - Tempo als eine zusammenhängende Leiste, Schalter flacher (an = oranger Rahmen statt voll orange, damit nur Play richtig orange ist), Titel oben einzeilig, laufende Folge mit orangem Rahmen.
 10. **Gespeicherte Daten** liegen im Browser-Speicher (`localStorage`, Schlüssel `bfp-daten-v1`). Export/Import als JSON-Datei. Import fragt vorher, weil er den aktuellen Stand ersetzt.
 
 ## Google Drive (Austausch zwischen Claude-Chat und Claude Code)
@@ -112,14 +119,17 @@ werkzeuge/            Hilfsprogramme
 | Test | Was er prüft | Befehl |
 |---|---|---|
 | `tests/pruefe-folgen.mjs` | folgen.json gültig (Nummern, Titel, Bereich, Dateinamen), welche MP3s vorhanden sind (+ Länge, wenn ffprobe da ist), ob es zu jeder Folge ein Manuskript `texte/folge-NN.md` gibt, ob die Anzahl „## Teil …“-Abschnitte zu den MP3s passt und ob jeder Teil höchstens 5.000 Zeichen hat, und ob die Teile richtig zusammengerechnet werden (`zeitleiste.js`) | `node tests/pruefe-folgen.mjs` (mit `--streng` zählen fehlende MP3s als Fehler) |
-| `tests/browser-test.mjs` | Die echte App in Chromium mit Test-Tönen: Liste, Filter, Teil A → B nahtlos, Restzeit, automatisch weiter, Zählen, Spulen über Teilgrenzen, Geschwindigkeit, Weiterhören nach Neustart, „Audio folgt bald“, Export/Import, Offline-Speichern (auch während des Abspielens), Spielen und Spulen ohne Internet, Sperrbildschirm-Titel. **Abschnitt 9:** Teilwechsel wie am Handy (mit Autoplay-Sperre): hängendes Teil-Ende (Wächter), Play am Ende von Teil A, +15 s bei unbekannter Länge, Play nach Ladefehler | `node tests/browser-test.mjs` (braucht Playwright + ffmpeg, läuft in Claude-Sitzungen) |
+| `tests/browser-test.mjs` | Die echte App in Chromium mit Test-Tönen: Liste, Filter, Teil A → B nahtlos, Restzeit, automatisch weiter, Zählen, Spulen über Teilgrenzen, Geschwindigkeit, Weiterhören nach Neustart, „Audio folgt bald“, Export/Import, Offline-Speichern (auch während des Abspielens), Spielen und Spulen ohne Internet, Sperrbildschirm-Titel. **Abschnitt 9:** Teilwechsel wie am Handy (mit Autoplay-Sperre): hängendes Teil-Ende (Wächter), Play am Ende von Teil A, +15 s bei unbekannter Länge, Play nach Ladefehler. **Abschnitt 10:** Design bei 320/360/412 px Breite: Player-Knöpfe kreisrund und innerhalb der Karte, nichts ragt seitlich heraus, Titel einzeilig, richtiges Play/Pause-Symbol | `node tests/browser-test.mjs` (braucht Playwright + ffmpeg, läuft in Claude-Sitzungen) |
 
 Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter „Actions“). Ein rotes ✗ heißt: in folgen.json ist ein Fehler.
 
-**Letzter Lauf (24.11.2026, nach dem Fix Teilwechsel):** `pruefe-folgen.mjs --streng` 0 Fehler, `browser-test.mjs` 0 Fehler (3-mal hintereinander). Gegenprobe: Mit der alten App-Version schlägt Abschnitt 9 fehl (Wiedergabe bleibt am Ende von Teil A hängen). Zusätzlich mit den echten MP3s von Folge 1 und Handy-Ansicht geprüft: Teil A → B läuft durch.
+**Letzter Lauf (24.11.2026, nach dem Design-Feinschliff):** `pruefe-folgen.mjs --streng` 0 Fehler, `browser-test.mjs` 0 Fehler (inkl. Abschnitt 10). Vorher/Nachher-Fotos mit `werkzeuge/bildschirmfoto.mjs` bei 320, 360 und 412 px geprüft.
+
+**Lauf davor (24.11.2026, nach dem Fix Teilwechsel):** `pruefe-folgen.mjs --streng` 0 Fehler, `browser-test.mjs` 0 Fehler (3-mal hintereinander). Gegenprobe: Mit der alten App-Version schlägt Abschnitt 9 fehl (Wiedergabe bleibt am Ende von Teil A hängen). Zusätzlich mit den echten MP3s von Folge 1 und Handy-Ansicht geprüft: Teil A → B läuft durch.
 
 ## Hilfsprogramme
 - `werkzeuge/mache-icons.py` – erzeugt die App-Symbole neu (`python3 werkzeuge/mache-icons.py`, braucht Pillow).
+- `werkzeuge/bildschirmfoto.mjs` – Foto der App in Handy-Größe mit den echten Folgen, z. B. zum Design prüfen: `node werkzeuge/bildschirmfoto.mjs bild.png 360` (Breite in Pixel; mit `--spielt` während der Wiedergabe). Braucht Playwright.
 
 ## Offene Punkte
 - [x] MP3s von Folge 1 hochgeladen.
@@ -190,6 +200,10 @@ Ziel: Alle Folgen später kostenlos auf YouTube und Spotify veröffentlichen.
 
 **Design**
 - [ ] Farben Orange/Blau gefallen und sind im Auto gut lesbar (auch bei Sonne)
+- [ ] **Neu:** Die 5 Player-Knöpfe sind kreisrund (nicht oval) und passen nebeneinander
+- [ ] **Neu:** Play zeigt ▶, beim Abspielen ⏸; Balken ist bis zur aktuellen Stelle orange
+- [ ] **Neu:** Knöpfe sind im Auto trotz kleinerer Größe noch gut zu treffen (sonst Claude Bescheid geben)
+- [ ] **Neu:** „✓ Automatisch weiter“ ist als eingeschaltet erkennbar (oranger Rahmen)
 - [ ] Neues App-Symbol (orange Kopfhörer auf Blau) erscheint auf dem Startbildschirm (ggf. App einmal entfernen und neu hinzufügen)
 
 **Sichern**

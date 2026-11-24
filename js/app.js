@@ -420,14 +420,18 @@
 
   // ---------- Anzeige: Player ----------
   function zeigePlay() {
-    el.play.textContent = audio.paused ? '▶' : '⏸';
+    el.play.classList.toggle('laeuft', !audio.paused);
     el.play.setAttribute('aria-label', audio.paused ? 'Abspielen' : 'Pause');
+  }
+  // Färbt den gehörten Teil des Balkens orange (CSS liest --wert)
+  function fuelleBalken() {
+    el.balken.style.setProperty('--wert', (el.balken.value / 10) + '%');
   }
   function zeigeZeit() {
     var f = folge(); if (!f) return;
     var g = gesamtVon(f);
     var pos = globalePos();
-    if (!zieheBalken) el.balken.value = g ? Math.round((pos / g) * 1000) : 0;
+    if (!zieheBalken) { el.balken.value = g ? Math.round((pos / g) * 1000) : 0; fuelleBalken(); }
     el.pZeit.textContent = Z.formatZeit(pos);
     el.pRest.textContent = '-' + Z.formatZeit(Math.max(0, g - pos));
     setzeMediaPosition(pos, g);
@@ -522,6 +526,7 @@
 
   el.balken.addEventListener('input', function () {
     zieheBalken = true;
+    fuelleBalken();
     var g = gesamtVon(folge() || { dauern: [] });
     el.pZeit.textContent = Z.formatZeit((el.balken.value / 1000) * g);
   });

@@ -243,6 +243,32 @@ try {
     await browser2.close();
   }
 
+  console.log('\n10) Design auf schmalen Handys (320, 360, 412 Pixel breit)');
+  for (const breite of [320, 360, 412]) {
+    await seite.setViewportSize({ width: breite, height: 800 });
+    await seite.waitForTimeout(100);
+    const m = await seite.evaluate(() => {
+      const karte = document.getElementById('player').getBoundingClientRect();
+      const knoepfe = [...document.querySelectorAll('.p-knoepfe .rund')].map((b) => b.getBoundingClientRect());
+      const titel = document.querySelector('.kopf h1').getBoundingClientRect();
+      return {
+        rund: knoepfe.every((r) => Math.abs(r.width - r.height) < 1),
+        drin: knoepfe.every((r) => r.left >= karte.left + 4 && r.right <= karte.right - 4),
+        seiteBreit: document.documentElement.scrollWidth <= window.innerWidth,
+        titelEinzeilig: titel.height < 32
+      };
+    });
+    pruefe(m.rund, `${breite} px: alle 5 Player-Knöpfe sind kreisrund (nicht oval)`);
+    pruefe(m.drin, `${breite} px: Knöpfe passen in die Player-Karte`);
+    pruefe(m.seiteBreit && m.titelEinzeilig, `${breite} px: nichts ragt seitlich heraus, Titel oben einzeilig`);
+  }
+  const symbol = await seite.evaluate(() => {
+    const b = document.getElementById('kPlay');
+    const sichtbar = (k) => getComputedStyle(b.querySelector(k)).display !== 'none';
+    return { pause: document.getElementById('audio').paused, play: sichtbar('.i-play'), pz: sichtbar('.i-pause') };
+  });
+  pruefe(symbol.play === symbol.pause && symbol.pz === !symbol.pause, 'Play-Knopf zeigt das richtige Symbol (▶ bei Pause, ⏸ beim Abspielen)');
+
   pruefe(jsFehler.length === 0, 'Keine JavaScript-Fehler' + (jsFehler.length ? ': ' + jsFehler.join(' | ') : ''));
 } catch (e) {
   fehler++;

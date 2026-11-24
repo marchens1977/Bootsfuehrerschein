@@ -29,8 +29,11 @@ main { padding: 0 14px 40px; max-width: 640px; margin: 0 auto; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 14px; max-width: 640px; margin: 0 auto;
 }
-.kopf h1 { font-size: 20px; margin: 0; }
-.klein { background: var(--karte); border-radius: 12px; width: 52px; height: 52px; font-size: 24px; }
+.kopf h1 {
+  font-size: 18px; margin: 0; min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.klein { flex: none; background: var(--karte); border-radius: 12px; width: 46px; height: 46px; font-size: 22px; }
 
 .menue {
   max-width: 640px; margin: 0 auto 12px; padding: 0 14px;
@@ -52,43 +55,77 @@ main { padding: 0 14px 40px; max-width: 640px; margin: 0 auto; }
 .wh-zeit { font-size: 15px; opacity: .8; }
 
 .player {
-  background: var(--karte); border-radius: 22px; padding: 18px 16px 20px; margin: 6px 0 18px;
+  background: var(--karte); border-radius: 22px; padding: 16px 16px 18px; margin: 4px 0 18px;
 }
 .p-bereich { color: var(--leise); font-size: 15px; text-transform: uppercase; letter-spacing: .06em; }
-.p-titel { font-size: 24px; font-weight: 800; margin: 4px 0 12px; }
+.p-titel { font-size: 22px; font-weight: 800; margin: 2px 0 14px; line-height: 1.2; }
 .p-meldung {
   background: #3d1a0a; color: #ffb08a; border-radius: 12px; padding: 12px;
   margin-bottom: 12px; font-weight: 600;
 }
-.balken { width: 100%; height: 36px; accent-color: var(--akzent); }
-.p-zeiten { display: flex; justify-content: space-between; color: var(--leise); font-size: 17px; font-variant-numeric: tabular-nums; }
+/* Fortschrittsbalken: orange = schon gehört (--wert setzt app.js) */
+.balken {
+  -webkit-appearance: none; appearance: none; display: block;
+  width: 100%; height: 32px; margin: 0; background: transparent; touch-action: none;
+}
+.balken::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 3px;
+  background: linear-gradient(to right, var(--akzent) var(--wert, 0%), rgba(255,255,255,.18) var(--wert, 0%));
+}
+.balken::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; margin-top: -8px; border-radius: 50%;
+  background: var(--akzent); border: 3px solid var(--text);
+}
+.balken::-moz-range-track { height: 6px; border-radius: 3px; background: rgba(255,255,255,.18); }
+.balken::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--akzent); }
+.balken::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--akzent); border: 3px solid var(--text); }
+.p-zeiten { display: flex; justify-content: space-between; color: var(--leise); font-size: 15px; font-variant-numeric: tabular-nums; margin-top: 2px; }
 .p-knoepfe {
-  display: flex; justify-content: space-between; align-items: center; gap: 6px; margin: 16px 0 18px;
+  display: flex; justify-content: space-between; align-items: center; gap: 6px;
+  max-width: 340px; margin: 14px auto 18px;
 }
+/* Runde Knöpfe: flex: none + feste Breite = Höhe → bleiben immer Kreise (vorher wurden sie zu Ovalen gequetscht) */
 .rund {
-  background: var(--karte2); border-radius: 50%;
-  width: 64px; height: 64px; font-size: 26px;
+  flex: none; width: 50px; height: 50px; padding: 0; border-radius: 50%;
+  background: var(--karte2); color: var(--text);
   display: flex; align-items: center; justify-content: center; flex-direction: column; line-height: 1;
+  transition: transform .1s;
 }
-.rund small { font-size: 12px; margin-top: 2px; }
-.rund.gross { width: 96px; height: 96px; font-size: 42px; background: var(--akzent); color: var(--auf-akzent); }
-.rund:active { transform: scale(.94); }
+.rund svg { width: 24px; height: 24px; fill: currentColor; }
+.rund svg.linie { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.rund.sprung svg { width: 22px; height: 22px; margin-top: 2px; }
+.rund.sprung span { font-size: 11px; font-weight: 700; margin-top: 1px; }
+.rund.gross { width: 72px; height: 72px; background: var(--akzent); color: var(--auf-akzent); box-shadow: 0 4px 14px rgba(255,89,16,.35); }
+.rund.gross svg { width: 34px; height: 34px; }
+.rund.gross .i-pause, .rund.gross.laeuft .i-play { display: none; }
+.rund.gross.laeuft .i-pause { display: block; }
+.rund:active { transform: scale(.92); }
+@media (max-width: 340px) {
+  .rund { width: 44px; height: 44px; }
+  .rund.gross { width: 62px; height: 62px; }
+}
 
-.tempo { display: flex; gap: 8px; margin-bottom: 10px; }
+/* Tempo als eine zusammenhängende Leiste */
+.tempo {
+  display: flex; gap: 4px; padding: 4px; margin-bottom: 10px;
+  background: var(--hg); border-radius: 14px;
+}
 .tempo button {
-  flex: 1; background: var(--karte2); border-radius: 12px; padding: 14px 0; font-size: 18px; font-weight: 600;
+  flex: 1; background: none; border-radius: 10px; padding: 10px 0; font-size: 16px; font-weight: 600; color: var(--leise);
 }
 .tempo button.aktiv { background: var(--text); color: var(--hg); }
 .schalter { display: flex; gap: 8px; }
 .umschalter {
-  flex: 1; background: var(--karte2); border-radius: 12px; padding: 14px 8px; font-size: 16px;
+  flex: 1; background: var(--karte2); border-radius: 12px; padding: 11px 6px; font-size: 15px; line-height: 1.2;
+  border: 2px solid transparent;
 }
-.umschalter.an { background: var(--akzent); color: var(--auf-akzent); font-weight: 700; }
-.umschalter.an::before { content: "✓ "; }
+.umschalter.an { background: rgba(255,89,16,.16); border-color: var(--akzent); color: var(--text); font-weight: 700; }
+.umschalter.an::before { content: "✓ "; color: var(--akzent); }
 
-.filter { display: flex; gap: 8px; margin: 4px 0 12px; }
+.filter { display: flex; gap: 6px; margin: 4px 0 12px; }
 .filter button {
-  flex: 1; background: var(--karte); border-radius: 999px; padding: 12px 0; font-size: 17px;
+  flex: 1; min-width: 0; background: var(--karte); border-radius: 999px; padding: 10px 0; font-size: 16px;
 }
 .filter button.aktiv { background: var(--text); color: var(--hg); font-weight: 700; }
 
@@ -96,14 +133,18 @@ main { padding: 0 14px 40px; max-width: 640px; margin: 0 auto; }
 .folge {
   background: var(--karte); border-radius: 16px; display: flex; align-items: stretch; overflow: hidden;
 }
-.folge.laeuft { outline: 3px solid var(--akzent); }
-.f-haupt { flex: 1; text-align: left; background: none; padding: 14px; display: flex; gap: 12px; align-items: center; }
+.folge { position: relative; }
+.folge.laeuft::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  border: 3px solid var(--akzent); border-radius: inherit;
+}
+.f-haupt { flex: 1; min-width: 0; text-align: left; background: none; padding: 14px 12px; display: flex; gap: 12px; align-items: center; }
 .f-nr {
-  min-width: 46px; height: 46px; border-radius: 12px; background: var(--karte2);
+  flex: none; width: 42px; height: 42px; border-radius: 12px; background: var(--karte2);
   display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px;
 }
 .f-text { flex: 1; min-width: 0; }
-.f-titel { font-weight: 700; font-size: 19px; }
+.f-titel { font-weight: 700; font-size: 18px; line-height: 1.25; }
 .f-info { color: var(--leise); font-size: 15px; margin-top: 3px; }
 .f-bereich { font-weight: 700; }
 .f-bereich.Basis { color: var(--basis); }
@@ -117,6 +158,7 @@ main { padding: 0 14px 40px; max-width: 640px; margin: 0 auto; }
 .f-mini { height: 4px; background: var(--karte2); border-radius: 2px; margin-top: 6px; overflow: hidden; }
 .f-mini > div { height: 100%; background: var(--akzent); }
 .f-offline {
-  background: var(--karte2); width: 64px; font-size: 13px; padding: 4px; line-height: 1.15;
+  flex: none; background: var(--karte2); width: 74px; font-size: 12.5px; padding: 6px 4px; line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 .f-offline.gespeichert { color: var(--gruen); }
