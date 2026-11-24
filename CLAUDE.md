@@ -123,6 +123,18 @@ Auf GitHub läuft `pruefe-folgen.mjs` automatisch bei jeder Änderung (Reiter �
 - [ ] Alles auf dem Handy und im Auto testen (Liste unten).
 - [ ] Ideen für später: Schlaf-Timer, Lesezeichen/Kapitel, „nur ungehörte Folgen“.
 
+### Prüfung Quellen, Stimme und Veröffentlichung (24.11.2026)
+Ziel: Alle Folgen später kostenlos auf YouTube und Spotify veröffentlichen.
+- **Quellen:** Laut Manuskripten nur der amtliche ELWIS-Fragenkatalog (Basisfragen, Stand August 2023). Folge 1 nennt dazu die Binnenschifffahrtsstraßen-Ordnung (Gesetz). Kein Hinweis auf ONWATER, Bootsschulen, Kursunterlagen, Videos oder Lehrbücher, weder in den Dateien noch in der Git-Geschichte.
+- **Wörtliche Übernahmen:** Die Prüfungsfragen sind teils fast wörtlich aus ELWIS (gewollt, damit man sie in der Prüfung wiedererkennt). Erklärungen und Merksätze hat Claude laut Notizen selbst formuliert. Keine Stelle gefunden, die nach Lehrbuch oder Kursunterlage klingt. **Nicht prüfbar:** ein echter Textvergleich mit ONWATER oder Lehrbüchern (Texte liegen nicht vor), was im Claude-Chat hineinkopiert wurde, und ob die MP3s genau dem Manuskript entsprechen (Abschreiben würde Guthaben kosten).
+- **Stimme:** „Marco – Warm & Friendly Narrator“, voice_id `xpx2H2DghGxsTBJ1pQO1`. Laut ElevenLabs eine **Library-Stimme** (Kategorie „professional“, also die Stimme eines echten Sprechers aus der Voice Library). Keine Standardstimme, nicht selbst erstellt. Link: https://elevenlabs.io/app/voice-library?voiceId=xpx2H2DghGxsTBJ1pQO1
+- **Tarif:** ElevenLabs „Starter“ (bezahlt). Der erlaubt laut ElevenLabs normalerweise auch kommerzielle Veröffentlichung. Das ist eine Einschätzung und keine Rechtsberatung.
+- **Ergebnis:** Im Projekt spricht nichts gegen die Veröffentlichung. Diese Punkte muss Marc noch selbst prüfen:
+  - [ ] War der Starter-Tarif schon aktiv, als Folge 1 und 2 vertont wurden? (Mit dem kostenlosen Tarif ist Veröffentlichen eingeschränkt.)
+  - [ ] Auf der Seite der Stimme „Marco“ in ElevenLabs nachsehen, ob der Sprecher Einschränkungen festgelegt hat. Claude-Sitzungen erreichen ElevenLabs nur über die Verbindung, und die zeigt das nicht an.
+  - [ ] Nutzungshinweise auf ELWIS zum Fragenkatalog lesen (vermutlich frei nutzbares amtliches Werk, aber nicht bestätigt).
+  - [ ] Bei YouTube und Spotify in die Beschreibung schreiben: „Gesprochen mit einer KI-Stimme (ElevenLabs)“.
+
 ## Test-Liste für Marc (am Handy abhaken)
 **Grundlagen**
 - [ ] App-Link öffnet sich im Handy-Browser (Chrome oder Samsung Internet)
