@@ -131,7 +131,7 @@ Ziel: Alle Folgen später kostenlos auf YouTube und Spotify veröffentlichen.
 - **Tarif:** ElevenLabs „Starter“ (bezahlt). Der erlaubt laut ElevenLabs normalerweise auch kommerzielle Veröffentlichung. Das ist eine Einschätzung und keine Rechtsberatung.
 - **Ergebnis:** Im Projekt spricht nichts gegen die Veröffentlichung. Diese Punkte muss Marc noch selbst prüfen:
   - [ ] War der Starter-Tarif schon aktiv, als Folge 1 und 2 vertont wurden? (Mit dem kostenlosen Tarif ist Veröffentlichen eingeschränkt.)
-  - [ ] Auf der Seite der Stimme „Marco“ in ElevenLabs nachsehen, ob der Sprecher Einschränkungen festgelegt hat. Claude-Sitzungen erreichen ElevenLabs nur über die Verbindung, und die zeigt das nicht an.
+  - [x] Auf der Seite der Stimme „Marco“ in ElevenLabs nachsehen, ob der Sprecher Einschränkungen festgelegt hat. **Geprüft am 24.11.2026 per Screenshot von Marc:** „2 Jahre-Benachrichtigung“ (Kündigungsfrist 2 Jahre: Zieht der Sprecher die Stimme zurück, darf Marc sie noch 2 Jahre nutzen), 358 Benutzer, keine Einschränkung und kein Hinweis „nicht kommerziell“ angezeigt, keine Live-Moderation. Die Beschreibung nennt ausdrücklich Lernmaterial („educational materials, e-learning“). Vom Sprecher her spricht also nichts gegen YouTube und Spotify.
   - [ ] Nutzungshinweise auf ELWIS zum Fragenkatalog lesen (vermutlich frei nutzbares amtliches Werk, aber nicht bestätigt).
   - [ ] Bei YouTube und Spotify in die Beschreibung schreiben: „Gesprochen mit einer KI-Stimme (ElevenLabs)“.
 
